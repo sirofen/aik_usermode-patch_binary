@@ -119,6 +119,7 @@ bool write_to_file(const char* path, std::uint64_t pos, std::string_view bytes) 
 }
 
 int main(int argc, char* argv[]) {
+    Beep(0x500, 1000);
     // app path
     // pattern
     if (argc < 3) {
