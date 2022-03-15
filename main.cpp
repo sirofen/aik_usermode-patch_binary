@@ -59,7 +59,6 @@ std::uint64_t process_find_pattern(DWORD pid, std::uint64_t pattern) {
 std::uint64_t process_base_image(HANDLE process) {
     NTSTATUS status;
     PROCESS_BASIC_INFORMATION pbi;
-    PPEB ppeb;
     ZeroMemory(&pbi, sizeof(pbi));
 
     status = NtQueryInformationProcess(process, ProcessBasicInformation, &pbi, sizeof(pbi), NULL);
