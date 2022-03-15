@@ -141,7 +141,7 @@ int main(int argc, char* argv[]) {
                         NULL,
                         NULL,
                         FALSE,
-                        0,
+                        CREATE_SUSPENDED,
                         NULL,
                         NULL,
                         &si,
