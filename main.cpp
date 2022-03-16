@@ -46,7 +46,7 @@ std::uint64_t process_find_pattern(DWORD pid, std::uint64_t pattern) {
         if (std::uint64_t rel_pattern_addr = sv.find(pattern_sv); rel_pattern_addr != sv.npos) {
             delete[] buf;
             CloseHandle(process);
-            std::printf("pattern address found: 0x%llX\n", rel_pattern_addr += (std::uint64_t) mbi.BaseAddress);
+            std::printf("Pattern address found: 0x%llX\n", rel_pattern_addr += (std::uint64_t) mbi.BaseAddress);
             return rel_pattern_addr;
         }
         delete[] buf;
