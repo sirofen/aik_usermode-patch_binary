@@ -112,7 +112,7 @@ bool write_to_file(const char* path, std::uint64_t pos, std::string_view bytes) 
         return false;
     }
 
-    printf("Wrote %lu bytes\n", bytes_written);
+    printf("%lu bytes written\n", bytes_written);
 
     CloseHandle(hfile);
     return true;
