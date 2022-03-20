@@ -327,7 +327,7 @@ int main(int argc, char* argv[]) {
     // app path
     // pattern
     // opt static search
-    // opt module search
+    // opt module name search
     if (argc < 3) {
         std::printf("invalid arguments");
         return 1;
