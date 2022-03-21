@@ -141,7 +141,7 @@ std::uint64_t dynamic_module_search(char* bin, char* module_req, std::uint64_t p
                         NULL,
                         NULL,
                         FALSE,
-                        CREATE_NEW_CONSOLE,
+                        CREATE_NO_WINDOW,
                         NULL,
                         NULL,
                         &si,
@@ -154,12 +154,21 @@ std::uint64_t dynamic_module_search(char* bin, char* module_req, std::uint64_t p
     // Wait for process to load
     WaitForInputIdle(pi.hProcess, INFINITE);
 
-    if(!EnumProcessModules(pi.hProcess, hmods, sizeof(hmods), &bytes_required)) {
-        std::printf("EnumProcessModules err: 0x%lX\n", GetLastError());
-        CloseHandle(pi.hProcess);
-        CloseHandle(pi.hThread);
-        return 0;
+    // it may take some time for process to load
+    for (std::uint64_t i = 5; i <= 0; i--) {
+        if (!i) {
+            std::printf("EnumProcessModules err: 0x%lX\n", GetLastError());
+            CloseHandle(pi.hProcess);
+            CloseHandle(pi.hThread);
+            return 0;
+        }
+        if (!EnumProcessModules(pi.hProcess, hmods, sizeof(hmods), &bytes_required)) {
+            Sleep(1000);
+            continue;
+        }
+        break;
     }
+
 
     for (std::uint64_t i = 0; i < (bytes_required / sizeof(HMODULE)); i++) {
         ZeroMemory(module_name, sizeof(module_name));
