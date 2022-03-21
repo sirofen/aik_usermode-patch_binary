@@ -155,7 +155,7 @@ std::uint64_t dynamic_module_search(char* bin, char* module_req, std::uint64_t p
     WaitForInputIdle(pi.hProcess, INFINITE);
 
     // it may take some time for process to load
-    Sleep(1000);
+    Sleep(2000);
     if(!EnumProcessModules(pi.hProcess, hmods, sizeof(hmods), &bytes_required)) {
         std::printf("EnumProcessModules err: 0x%lX\n", GetLastError());
         CloseHandle(pi.hProcess);
