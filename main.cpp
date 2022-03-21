@@ -155,20 +155,13 @@ std::uint64_t dynamic_module_search(char* bin, char* module_req, std::uint64_t p
     WaitForInputIdle(pi.hProcess, INFINITE);
 
     // it may take some time for process to load
-    for (std::uint64_t i = 5; i <= 0; i--) {
-        if (!i) {
-            std::printf("EnumProcessModules err: 0x%lX\n", GetLastError());
-            CloseHandle(pi.hProcess);
-            CloseHandle(pi.hThread);
-            return 0;
-        }
-        if (!EnumProcessModules(pi.hProcess, hmods, sizeof(hmods), &bytes_required)) {
-            Sleep(1000);
-            continue;
-        }
-        break;
+    Sleep(1000);
+    if(!EnumProcessModules(pi.hProcess, hmods, sizeof(hmods), &bytes_required)) {
+        std::printf("EnumProcessModules err: 0x%lX\n", GetLastError());
+        CloseHandle(pi.hProcess);
+        CloseHandle(pi.hThread);
+        return 0;
     }
-
 
     for (std::uint64_t i = 0; i < (bytes_required / sizeof(HMODULE)); i++) {
         ZeroMemory(module_name, sizeof(module_name));
@@ -337,6 +330,7 @@ int main(int argc, char* argv[]) {
     // pattern
     // opt static search
     // opt module name search
+    // opt program args
     if (argc < 3) {
         std::printf("invalid arguments");
         return 1;
@@ -345,15 +339,24 @@ int main(int argc, char* argv[]) {
     std::uint64_t pattern_i = _strtoui64(argv[2], NULL, 16);
 
     std::uint64_t pattern_offset;
+
+    char proc_cmd[MAX_PATH]{};
+
+    std::memcpy(proc_cmd, argv[1], std::strlen(argv[1]));
+    if (argv[5]) {
+        proc_cmd[std::strlen(argv[1])] = ' ';
+        std::memcpy(&proc_cmd[std::strlen(argv[1]) + 1], argv[5], std::strlen(argv[5]));
+    }
+
     if (!argv[3]) {
         std::printf("Dynamic search...\n");
-        pattern_offset = dynamic_search(argv[1], pattern_i);
+        pattern_offset = dynamic_search(proc_cmd, pattern_i);
     } else if (!argv[4]) {
         std::printf("Static search...\n");
-        pattern_offset = static_search(argv[1], pattern_i);
+        pattern_offset = static_search(proc_cmd, pattern_i);
     } else {
         std::printf("Module search...\n");
-        pattern_offset = dynamic_module_search(argv[1], argv[4], pattern_i);
+        pattern_offset = dynamic_module_search(proc_cmd, argv[4], pattern_i);
     }
 
     static_assert(sizeof(pattern_offset) == kPayloadSize);
